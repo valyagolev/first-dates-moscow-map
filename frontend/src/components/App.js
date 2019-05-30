@@ -1,18 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import { texts } from "../texts.js";
 
+var currentZoomListener = null;
+window.addEventListener('mousewheel', (e) => {
+  console.log("?", e);
+  e.preventDefault();
+  currentZoomListener && currentZoomListener(e);
+}, { passive: false });
+
+
+function zoomChange(zoom, e) {
+  var newZoom = zoom - ((e.deltaY * (e.deltaMode ? 120 : 1) / 10) > 0 ? 0.5 : -0.5) ;
+  if (newZoom < 0.1) return 0.1;
+  if (newZoom > 20) return 20;
+  return newZoom;
+}
+
 const App = () => {
-  const zoom = 2;
+  const [zoom, setZoom] = useState(2);
   var [currentSelection, setCurrentSelection] = useState(null);
 
   if (currentSelection)
     currentSelection = texts[currentSelection.svg_id] || currentSelection;
 
+  useEffect(() => {
+    currentZoomListener = e => {
+      console.log(zoomChange(zoom, e));
+      setZoom(zoomChange(zoom, e));
+    }
+  });
+
   return <div
       style={{
-        position: "relative"
+        width: 1024,
+        height: 1024,
+        margin: "0 auto",
+        position: "relative",
+        overflow: "hidden"
       }}>
 
     <img
@@ -55,6 +81,7 @@ const App = () => {
             position: "absolute",
             background: "rgba(1, 1, 1, 0.5)",
             width: "100%",
+            height: 1024,
             // height: "100%",
           }}
           onClick={e => setCurrentSelection(null)}>
