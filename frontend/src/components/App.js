@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
+
+import { texts } from "../texts.js";
 
 const App = () => {
   const zoom = 2;
+  var [currentSelection, setCurrentSelection] = useState(null);
+
+  if (currentSelection)
+    currentSelection = texts[currentSelection.svg_id] || currentSelection;
+
   return <div
       style={{
         position: "relative"
@@ -30,10 +37,71 @@ const App = () => {
         styleElement.textContent = document.getElementsByTagName("style")[0].innerText; // add whatever you need here
         // svgDoc.getElementById("where-to-insert").appendChild(styleElement);
         svgDoc.getElementsByTagName("svg")[0].appendChild(styleElement);
+        svgDoc.querySelectorAll("svg > g").forEach(el => {
+          el.onclick = () => {
+            console.log(el.id);
+            console.log(texts[el.id]);
+            setCurrentSelection({
+              svg_id: el.id
+            });
+          }
+        });
       }}>
       
     </object>
-     
+    
+    { !currentSelection ? null : 
+        <div style={{
+            position: "absolute",
+            background: "rgba(1, 1, 1, 0.5)",
+            width: "100%",
+            // height: "100%",
+          }}
+          onClick={e => setCurrentSelection(null)}>
+
+          <div
+          style={{
+            margin: "0 auto",
+            width: 540,
+            backgroundColor: "white",
+            paddingBottom: 30,
+            position: "relative"
+          }}
+          onClick={e => e.stopPropagation()}>
+
+            <button
+              onClick={e => setCurrentSelection(null)}
+              style={{
+                position: "absolute",
+                width: 30,
+                height: 30,
+                background: 0,
+                color: "#CC2229",
+                border: 0,
+                right: 0,
+                fontSize: 20,
+                cursor: "pointer"
+              }}>X</button>
+
+            <img
+              src={"/static/pics/" + currentSelection.image_id + ".jpg"}
+              style={{
+                width: 500,
+                margin: 15
+              }}
+              />
+
+            <p style={{
+              width: 470,
+              marginLeft: 30,
+              marginRight: 30,
+              color: "#CC2229",
+              textAlign: "justify"
+            }}>{currentSelection.english_text || currentSelection.svg_id}</p>
+          </div>
+        </div>
+    }
+    
 
   </div>;
 }
