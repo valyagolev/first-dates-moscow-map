@@ -12,14 +12,16 @@ window.addEventListener('mousewheel', (e) => {
 
 
 function zoomChange(zoom, e) {
-  var newZoom = zoom - ((e.deltaY * (e.deltaMode ? 120 : 1) / 10) > 0 ? 0.5 : -0.5) ;
-  if (newZoom < 0.1) return 0.1;
-  if (newZoom > 20) return 20;
+  var newZoom = zoom - ((e.deltaY * (e.deltaMode ? 120 : 1)) > 0 ? 0.2 : -0.2) ;
+  if (newZoom < 1) return 1;
+  if (newZoom > 2) return 2;
   return newZoom;
 }
 
+// const INITIAL_IMAGE_SIZE = 
+
 const App = () => {
-  const [zoom, setZoom] = useState(2);
+  const [zoom, setZoom] = useState(1);
   var [currentSelection, setCurrentSelection] = useState(null);
 
   if (currentSelection)
@@ -33,9 +35,11 @@ const App = () => {
   });
 
   return <div
+      onWheel={e => console.log(e)}
       style={{
         width: 1024,
-        height: 1024,
+        height: 512,
+        border: "1px black solid",
         margin: "0 auto",
         position: "relative",
         overflow: "hidden"
@@ -43,19 +47,21 @@ const App = () => {
 
     <img
       src="/static/map_big.jpg"
+      onWheel={e => console.log(e)}
       style={{
         position: "absolute",
-        width: 400 * zoom
+        width: 1024 * zoom
       }}/>
 
     <object
       id="svg-object"
       data="static/plashki.svg"
       type="image/svg+xml"
+      onWheel={e => console.log(e)}
       style={{
         position: "absolute",
         top: -29 * zoom,
-        width: 400 * zoom
+        width: 1024 * zoom
       }}
       onLoad={(e) => {
         var svgDoc = e.currentTarget.contentDocument;
@@ -63,6 +69,13 @@ const App = () => {
         styleElement.textContent = document.getElementsByTagName("style")[0].innerText; // add whatever you need here
         // svgDoc.getElementById("where-to-insert").appendChild(styleElement);
         svgDoc.getElementsByTagName("svg")[0].appendChild(styleElement);
+
+        svgDoc.addEventListener('mousewheel', (e) => {
+          console.log("? svg", e);
+          e.preventDefault();
+          currentZoomListener && currentZoomListener(e);
+        }, { passive: false });
+
         svgDoc.querySelectorAll("svg > g").forEach(el => {
           el.onclick = () => {
             console.log(el.id);
