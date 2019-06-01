@@ -82,9 +82,21 @@ const App = () => {
       }}>
         КАРТА ПЕРВЫХ СВИДАНИЙ МОСКВЫ / FIRST DATES OF MOSCOW
       </div>
-      <div>
+      <button style={{
+          background: 0,
+          color: "#CC2229",
+          border: 0,
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: 500,
+          fontSpacing: "1em",
+          letterSpacing: "0.2em",
+          fontSize: "16px"
+        }}
+        onClick={e => setCurrentSelection({
+          svg_id: "about"
+        })}>
         О КАРТЕ / ABOUT
-      </div>
+      </button>
     </div>
     <div
       // onWheel={e => console.log(e)}
@@ -203,21 +215,40 @@ const App = () => {
                 cursor: "pointer"
               }}>X</button>
 
-            <img
-              src={"./frontend/vendor_static/pics/" + currentSelection.image_id + ".jpg"}
-              style={{
-                width: 500,
-                margin: 15
-              }}
-              />
+            {
+              currentSelection.svg_id == "about" ?
+                <div style={{
+                  display: "flex",
+                  width: 470,
+                  margin: "30px auto"
+                }}>
+                  <div style={{
+                    width: 220
+                  }}><strong>карта</strong> МОСКВЫ</div>
+                  <div style={{
+                    width: 220
+                  }}><strong>карта</strong> МОСКВЫ</div>
+                </div> : 
+              
+              <div>
+                <img
+                  src={"./frontend/vendor_static/pics/" + currentSelection.image_id + ".jpg"}
+                  style={{
+                    width: 500,
+                    margin: 15
+                  }}
+                  />
 
-            <p style={{
-              width: 470,
-              marginLeft: 30,
-              marginRight: 30,
-              color: "#CC2229",
-              textAlign: "justify"
-            }}>{currentSelection.english_text || currentSelection.svg_id}</p>
+                <p style={{
+                  width: 470,
+                  marginLeft: 30,
+                  marginRight: 30,
+                  color: "#CC2229",
+                  textAlign: "justify"
+                }}>{currentSelection.english_text || currentSelection.svg_id}</p>
+              </div>
+
+            }
           </div>
         </div>
     }
