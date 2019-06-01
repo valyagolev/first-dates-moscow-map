@@ -47,7 +47,7 @@ const App = () => {
   useEffect(() => {
     currentZoomListener = e => {
       console.log(zoomChange(zoom, e));
-      setZoom(zoomChange(zoom, e));
+      // setZoom(zoomChange(zoom, e));
     }
   });
 
@@ -55,7 +55,8 @@ const App = () => {
   useEffect(() => {
     currentPan = ([dx, dy]) => {
       setOffset([
-        offset[0] + dx,
+        // offset[0] + dx,
+        offset[0],
         offset[1] + dy
       ]);
     };
@@ -124,11 +125,11 @@ const App = () => {
         // svgDoc.getElementById("where-to-insert").appendChild(styleElement);
         svgDoc.getElementsByTagName("svg")[0].appendChild(styleElement);
 
-        svgDoc.addEventListener('mousewheel', (e) => {
-          console.log("? svg", e);
-          e.preventDefault();
-          currentZoomListener && currentZoomListener(e);
-        }, { passive: false });
+        // svgDoc.addEventListener('mousewheel', (e) => {
+        //   console.log("? svg", e);
+        //   e.preventDefault();
+        //   currentZoomListener && currentZoomListener(e);
+        // }, { passive: false });
 
         var clickStart = null;
 
