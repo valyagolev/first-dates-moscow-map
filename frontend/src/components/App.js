@@ -4,11 +4,13 @@ import ReactDOM from "react-dom";
 import { texts } from "../texts.js";
 
 var currentZoomListener = null;
-window.addEventListener('mousewheel', (e) => {
-  console.log("?", e);
-  e.preventDefault();
-  currentZoomListener && currentZoomListener(e);
-}, { passive: false });
+// window.addEventListener('mousewheel', (e) => {
+//   console.log("?", e);
+//   e.preventDefault();
+//   currentZoomListener && currentZoomListener(e);
+// }, { passive: false });
+
+var currentPan = null;
 
 
 function zoomChange(zoom, e) {
@@ -18,15 +20,30 @@ function zoomChange(zoom, e) {
   return newZoom;
 }
 
-// const INITIAL_IMAGE_SIZE = 
+function useWindowHeight() {
+  const [height, setHeight] = useState(window.innerHeight);
+  
+  useEffect(() => {
+    const handleResize = () => setHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+  
+  return height;
+}
+
 
 const App = () => {
-  const [zoom, setZoom] = useState(1);
+  const windowHeight = useWindowHeight();
+  const mapHeight = windowHeight - 60;
+  
   var [currentSelection, setCurrentSelection] = useState(null);
-
   if (currentSelection)
     currentSelection = texts[currentSelection.svg_id] || currentSelection;
 
+  const [zoom, setZoom] = useState(1);
   useEffect(() => {
     currentZoomListener = e => {
       console.log(zoomChange(zoom, e));
@@ -34,12 +51,46 @@ const App = () => {
     }
   });
 
-  return <div
-      onWheel={e => console.log(e)}
+  const [offset, setOffset] = useState([0, -170]);
+  useEffect(() => {
+    currentPan = ([dx, dy]) => {
+      setOffset([
+        offset[0] + dx,
+        offset[1] + dy
+      ]);
+    };
+  });
+
+  return <div style={{
+    width: 1024,
+    margin: "0 auto"
+}}>
+    <div style={{
+        width: 1024 - 35,
+        margin: "5px auto",
+        display: "flex",
+        color: "#CC2229",
+        fontFamily: "'Montserrat', sans-serif",
+        fontWeight: 500,
+        fontSpacing: "1em",
+        letterSpacing: "0.2em",
+        fontSize: "16px"
+    }}>
+      <div style={{
+        flexGrow: 5
+      }}>
+        КАРТА ПЕРВЫХ СВИДАНИЙ МОСКВЫ / FIRST DATES OF MOSCOW
+      </div>
+      <div>
+        О КАРТЕ / ABOUT
+      </div>
+    </div>
+    <div
+      // onWheel={e => console.log(e)}
       style={{
         width: 1024,
-        height: 512,
-        border: "1px black solid",
+        height: mapHeight,
+        // border: "1px black solid",
         margin: "0 auto",
         position: "relative",
         overflow: "hidden"
@@ -47,9 +98,11 @@ const App = () => {
 
     <img
       src="/static/map_big.jpg"
-      onWheel={e => console.log(e)}
+      // onWheel={e => console.log(e)}
       style={{
         position: "absolute",
+        left: offset[0],
+        top: offset[1],
         width: 1024 * zoom
       }}/>
 
@@ -57,10 +110,11 @@ const App = () => {
       id="svg-object"
       data="static/plashki.svg"
       type="image/svg+xml"
-      onWheel={e => console.log(e)}
+      // onWheel={e => console.log(e)}
       style={{
         position: "absolute",
-        top: -29 * zoom,
+        left: offset[0],
+        top: -29 * zoom + offset[1],
         width: 1024 * zoom
       }}
       onLoad={(e) => {
@@ -75,6 +129,27 @@ const App = () => {
           e.preventDefault();
           currentZoomListener && currentZoomListener(e);
         }, { passive: false });
+
+        var clickStart = null;
+
+        function pan(e) {
+          currentPan([
+            e.screenX - clickStart[0],
+            e.screenY - clickStart[1]
+          ]);
+
+          clickStart = [e.screenX, e.screenY];
+        }
+
+        svgDoc.onpointerdown = function(e) {
+          clickStart = [e.screenX, e.screenY];
+          svgDoc.onpointermove = pan;
+        }
+        
+        svgDoc.onpointerup = function(e) {
+          clickStart = null;
+          svgDoc.onpointermove = null;
+        }
 
         svgDoc.querySelectorAll("svg > g").forEach(el => {
           el.onclick = () => {
@@ -94,7 +169,7 @@ const App = () => {
             position: "absolute",
             background: "rgba(1, 1, 1, 0.5)",
             width: "100%",
-            height: 1024,
+            height: 1024
             // height: "100%",
           }}
           onClick={e => setCurrentSelection(null)}>
@@ -102,10 +177,14 @@ const App = () => {
           <div
           style={{
             margin: "0 auto",
-            width: 540,
+            width: 555,
+            height: mapHeight - 115,
             backgroundColor: "white",
             paddingBottom: 30,
-            position: "relative"
+            position: "relative",
+            top: 45,
+            overflowY: "scroll",
+            overflowX: "hidden"
           }}
           onClick={e => e.stopPropagation()}>
 
@@ -142,7 +221,7 @@ const App = () => {
         </div>
     }
     
-
+    </div>
   </div>;
 }
 
