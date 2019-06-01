@@ -203,7 +203,7 @@ const App = () => {
               }}>X</button>
 
             <img
-              src={"./static/pics/" + currentSelection.image_id + ".jpg"}
+              src={"./frontend/vendor_static/pics/" + currentSelection.image_id + ".jpg"}
               style={{
                 width: 500,
                 margin: 15
