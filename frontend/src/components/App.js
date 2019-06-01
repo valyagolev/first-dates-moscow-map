@@ -97,7 +97,7 @@ const App = () => {
       }}>
 
     <img
-      src="/static/map_big.jpg"
+      src="./frontend/vendor_static/map_big.jpg"
       // onWheel={e => console.log(e)}
       style={{
         position: "absolute",
@@ -108,7 +108,7 @@ const App = () => {
 
     <object
       id="svg-object"
-      data="static/plashki.svg"
+      data="./frontend/vendor_static/plashki.svg"
       type="image/svg+xml"
       // onWheel={e => console.log(e)}
       style={{
@@ -203,7 +203,7 @@ const App = () => {
               }}>X</button>
 
             <img
-              src={"/static/pics/" + currentSelection.image_id + ".jpg"}
+              src={"./static/pics/" + currentSelection.image_id + ".jpg"}
               style={{
                 width: 500,
                 margin: 15
