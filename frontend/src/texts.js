@@ -182,6 +182,7 @@ const ptexts = [
     },
     {
         "image_id": "46_2001_j_13",
+        "svg_id": "_x34_6_1_",
         "english_text": "We talked our parents into arranging extra tutoring for us, and we touched each other’s legs under the table the whole lesson.\t\t\t\t\t\t"
     },
     {
